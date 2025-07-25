@@ -1,6 +1,8 @@
-# firebase1
+# Family Expense Tracker
 
-A new Flutter project.
+Family Expense Tracker is a Flutter application designed to help families manage and track their shared expenses easily and efficiently.
+
+A modern Flutter app for managing and tracking family expenses. Features include user authentication, expense categorization, member management, and a clean, intuitive UI. Built with a Firebase backend and Riverpod state management, following the MVVM architecture.
 
 ## Getting Started
 

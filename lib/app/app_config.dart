@@ -8,7 +8,11 @@ import '../sign_up.dart';
 class AppConfig extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Always show the signup screen first
-    return SignUpScreen();
+    final authState = ref.watch(authViewModelProvider);
+    return authState.when(
+      data: (user) => user != null ? MainNavigation() : LoginScreen(),
+      loading: () => Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (_,__) => Scaffold(body: Center(child: Text('Error'))),
+    );
   }
 } 
