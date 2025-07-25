@@ -10,71 +10,125 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final emailC = TextEditingController();
   final passC = TextEditingController();
-  final nameC = TextEditingController();
-  bool isRegistering = false;
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final authViewModel = ref.read(authViewModelProvider.notifier);
-    
     return Scaffold(
-      appBar: AppBar(title: Text('Login / Register')),
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children:[
-            if (isRegistering) 
-              TextField(
-                controller: nameC, 
-                decoration: InputDecoration(labelText:'Full Name'),
+      backgroundColor: Colors.teal,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 40),
+              Image.asset(
+                'assets/images/login_icon.png',
+                height: 200,
               ),
-            TextField(controller: emailC, decoration: InputDecoration(labelText:'Email')),
-            SizedBox(height: 12),
-            TextField(controller: passC, decoration: InputDecoration(labelText:'Password'), obscureText:true),
-            SizedBox(height:20),
-            if (!isRegistering) ...[
-              ElevatedButton(
-                onPressed: isLoading ? null : () async {
-                  setState(() => isLoading = true);
-                  try {
-                    await authViewModel.signIn(emailC.text, passC.text);
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  } finally {
-                    setState(() => isLoading = false);
-                  }
-                }, 
-                child: isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Login')
+              SizedBox(height: 20),
+              Text(
+                'Welcome Back',
+                style: TextStyle(fontSize: 18, color: Colors.white70),
               ),
-              TextButton(
-                onPressed: ()=>setState(()=>isRegistering=true), 
-                child: Text('Create Account')
+              SizedBox(height: 8),
+              Text(
+                'Please, Log In.',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-            ] else ...[
-              ElevatedButton(
-                onPressed: isLoading ? null : () async {
-                  setState(() => isLoading = true);
-                  try {
-                    await authViewModel.signUp(emailC.text, passC.text, nameC.text);
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  } finally {
-                    setState(() => isLoading = false);
-                  }
-                }, 
-                child: isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Register')
-              ),
-              TextButton(
-                onPressed: ()=>setState(()=>isRegistering=false), 
-                child: Text('Back to Login')
+              SizedBox(height: 32),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: emailC,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person_outline),
+                        hintText: 'Email',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: passC,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock_outline),
+                        hintText: 'Password',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: isLoading ? null : () async {
+                        setState(() => isLoading = true);
+                        try {
+                          await authViewModel.signIn(emailC.text, passC.text);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())),
+                          );
+                        } finally {
+                          setState(() => isLoading = false);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal[700],
+                        minimumSize: Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text('Continue'),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(child: Divider()),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text('Or'),
+                        ),
+                        Expanded(child: Divider()),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    OutlinedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/signup');
+                      },
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                        side: BorderSide(color: Colors.white54),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        backgroundColor: Colors.white.withOpacity(0.3),
+                      ),
+                      child: Text('Create an Account', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
               ),
             ],
-          ],
+          ),
         ),
       ),
     );

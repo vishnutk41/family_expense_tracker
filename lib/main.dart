@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'app/app_config.dart';
 import 'utils/constants.dart';
 import 'utils/route_animations.dart';
+import '../sign_up.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,6 +66,9 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
+      routes: {
+        '/signup': (context) => SignUpScreen(),
+      },
       home: AppConfig(),
     );
   }
