@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodels/family_viewmodel.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import '../utils/constants.dart';
+import '../providers/ui_state_providers.dart';
 
 class FamilyScreen extends ConsumerStatefulWidget {
   @override
@@ -12,7 +13,7 @@ class FamilyScreen extends ConsumerStatefulWidget {
 class _FamilyScreenState extends ConsumerState<FamilyScreen> {
   final TextEditingController nameC = TextEditingController();
   final TextEditingController joinC = TextEditingController();
-  bool isLoading = false;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +21,7 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
     final familyState = ref.watch(familyViewModelProvider);
     final familyViewModel = ref.read(familyViewModelProvider.notifier);
     final authViewModel = ref.read(authViewModelProvider.notifier);
+    final isLoading = ref.watch(familyLoadingProvider);
 
     return authState.when(
       data: (user) {
@@ -45,7 +47,7 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
                     ElevatedButton(
                       onPressed: isLoading ? null : () async {
                         if (nameC.text.isNotEmpty) {
-                          setState(() => isLoading = true);
+                          ref.read(familyLoadingProvider.notifier).state = true;
                           try {
                             final familyId = await familyViewModel.createFamily(nameC.text);
                             await familyViewModel.joinFamily(user.uid, familyId);
@@ -55,7 +57,7 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
                               SnackBar(content: Text(e.toString())),
                             );
                           } finally {
-                            setState(() => isLoading = false);
+                            ref.read(familyLoadingProvider.notifier).state = false;
                           }
                         }
                       }, 
@@ -72,7 +74,7 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
                     ElevatedButton(
                       onPressed: isLoading ? null : () async {
                         if (joinC.text.isNotEmpty) {
-                          setState(() => isLoading = true);
+                          ref.read(familyLoadingProvider.notifier).state = true;
                           try {
                             await familyViewModel.joinFamily(user.uid, joinC.text);
                             joinC.clear();
@@ -81,7 +83,7 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
                               SnackBar(content: Text(e.toString())),
                             );
                           } finally {
-                            setState(() => isLoading = false);
+                            ref.read(familyLoadingProvider.notifier).state = false;
                           }
                         }
                       }, 

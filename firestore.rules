@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can read their own profile and write only their own document
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Families: members are listed in `members` array with their uid
+    match /families/{familyId} {
+      allow read: if isMember(familyId);
+      allow create: if request.auth != null; // anyone authenticated can create a family
+      // Allow updates for existing members OR when the authenticated user is joining
+      allow update: if isMember(familyId) || isSelfJoin(familyId);
+      allow delete: if isMember(familyId);
+
+      // Subcollection: expenses under a family
+      match /expenses/{expenseId} {
+        allow read: if isMember(familyId);
+        allow create: if isMember(familyId);
+        allow update, delete: if isMember(familyId) && isOwner(familyId, expenseId);
+      }
+    }
+
+    function isMember(familyId) {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/families/$(familyId)) &&
+        get(/databases/$(database)/documents/families/$(familyId)).data.members.hasAny([request.auth.uid]);
+    }
+
+    // Permit updating the family doc when the authenticated user adds themself to members
+    function isSelfJoin(familyId) {
+      return request.auth != null &&
+        resource != null &&
+        // Previously not a member
+        !resource.data.members.hasAny([request.auth.uid]) &&
+        // New value includes the authenticated user
+        request.resource.data.members.hasAny([request.auth.uid]) &&
+        // Members list should only grow (prevent removal scenarios)
+        request.resource.data.members.size() >= resource.data.members.size();
+    }
+
+    // Ownership check: only the creator can update/delete
+    function isOwner(familyId, expenseId) {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/families/$(familyId)/expenses/$(expenseId)).data.userId == request.auth.uid;
+    }
+  }
+}

@@ -1,27 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'viewmodels/auth_viewmodel.dart';
+import 'providers/ui_state_providers.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool isLoading = false;
 
   void _handleSignUp() {
-    String username = _usernameController.text.trim();
-    String password = _passwordController.text;
-    // Add your signup logic here
-    print('Username: $username');
-    print('Password: $password');
+    final email = _usernameController.text.trim();
+    final password = _passwordController.text;
+
+    ref.read(signUpLoadingProvider.notifier).state = true;
+    () async {
+      try {
+        // Using the email as both email and display name for now
+        await ref.read(authViewModelProvider.notifier).signUp(email, password, email);
+        if (!mounted) return;
+        Navigator.pop(context); // Return to root; AppConfig will route to MainNavigation
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign up failed: $e')),
+        );
+      } finally {
+        if (mounted) ref.read(signUpLoadingProvider.notifier).state = false;
+      }
+    }();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(signUpLoadingProvider);
     return Scaffold(
       backgroundColor: Colors.teal,
       body: SafeArea(

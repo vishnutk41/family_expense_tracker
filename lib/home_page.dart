@@ -12,6 +12,7 @@ import 'viewmodels/auth_viewmodel.dart';
 import 'viewmodels/expense_viewmodel.dart';
 import 'viewmodels/family_viewmodel.dart';
 import 'models/expense.dart';
+import 'providers/ui_state_providers.dart';
 
 // Providers
 final expenseListProvider = StreamProvider.autoDispose<List<Expense>>((ref) {
@@ -29,7 +30,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   final catC = TextEditingController(), amtC = TextEditingController();
   final List<String> categories = AppConstants.expenseCategories;
-  String? selectedCategory;
+  
 
   @override Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
@@ -40,6 +41,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final authViewModel = ref.read(authViewModelProvider.notifier);
     final expenseViewModel = ref.read(expenseViewModelProvider.notifier);
     final familyViewModel = ref.read(familyViewModelProvider.notifier);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return authState.when(
       data: (user) {
@@ -106,7 +108,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           value: cat,
                           child: Text(cat),
                         )).toList(),
-                        onChanged: (val) => setState(() => selectedCategory = val),
+                        onChanged: (val) => ref.read(selectedCategoryProvider.notifier).state = val,
                       ),
                       SizedBox(height: 12),
                       TextField(
@@ -140,7 +142,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   selectedCategory!, 
                                   double.tryParse(amtC.text) ?? 0
                                 );
-                                setState(() => selectedCategory = null);
+                                ref.read(selectedCategoryProvider.notifier).state = null;
                                 amtC.clear();
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(

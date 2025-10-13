@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodels/auth_viewmodel.dart';
+import '../providers/ui_state_providers.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   @override
@@ -10,11 +11,12 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final emailC = TextEditingController();
   final passC = TextEditingController();
-  bool isLoading = false;
+  
 
   @override
   Widget build(BuildContext context) {
     final authViewModel = ref.read(authViewModelProvider.notifier);
+    final isLoading = ref.watch(loginLoadingProvider);
     return Scaffold(
       backgroundColor: Colors.teal,
       body: SafeArea(
@@ -76,7 +78,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: isLoading ? null : () async {
-                        setState(() => isLoading = true);
+                        ref.read(loginLoadingProvider.notifier).state = true;
                         try {
                           await authViewModel.signIn(emailC.text, passC.text);
                         } catch (e) {
@@ -84,7 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             SnackBar(content: Text(e.toString())),
                           );
                         } finally {
-                          setState(() => isLoading = false);
+                          ref.read(loginLoadingProvider.notifier).state = false;
                         }
                       },
                       style: ElevatedButton.styleFrom(

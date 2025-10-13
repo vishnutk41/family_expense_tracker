@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../home_page.dart';
 import 'members_expenses_screen.dart';
 import 'profile_page.dart';
+import '../providers/ui_state_providers.dart';
 
 class MainNavigation extends ConsumerStatefulWidget {
   @override
@@ -10,7 +11,7 @@ class MainNavigation extends ConsumerStatefulWidget {
 }
 
 class _MainNavigationState extends ConsumerState<MainNavigation> with SingleTickerProviderStateMixin {
-  int _currentIndex = 1; // Start with Home (Family Finance) as the initial page
+  // Index is managed via Riverpod provider
   late AnimationController _fabController;
 
   final List<Widget> _pages = [
@@ -42,6 +43,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation> with SingleTick
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = ref.watch(navigationIndexProvider);
     final Color fabPink = Color(0xFFE1A4D8);
     final Color bgPurple = Color(0xFF5B2065); // still used for icons
     return Scaffold(
@@ -56,7 +58,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation> with SingleTick
             child: child,
           );
         },
-        child: _pages[_currentIndex],
+        child: _pages[currentIndex],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
@@ -92,7 +94,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation> with SingleTick
                   fillColor: Colors.transparent,
                   elevation: 0,
                   onPressed: () {
-                    setState(() => _currentIndex = 1); // Center tab (Home)
+                    ref.read(navigationIndexProvider.notifier).state = 1; // Center tab (Home)
                   },
                   child: Icon(_getFabIcon(), color: Colors.white, size: 32),
                 ),
@@ -103,8 +105,8 @@ class _MainNavigationState extends ConsumerState<MainNavigation> with SingleTick
       ),
       bottomNavigationBar: _CustomBottomBar(
         bgColor: bgPurple,
-        onTab: (index) => setState(() => _currentIndex = index),
-        currentIndex: _currentIndex,
+        onTab: (index) => ref.read(navigationIndexProvider.notifier).state = index,
+        currentIndex: currentIndex,
       ),
     );
   }
@@ -252,4 +254,4 @@ class _NotchedBarClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-} 
+}
