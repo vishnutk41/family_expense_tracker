@@ -13,6 +13,13 @@ final expenseViewModelProvider = StateNotifierProvider<ExpenseViewModel, AsyncVa
   return ExpenseViewModel(ref.read(expenseRepositoryProvider));
 });
 
+final expenseListProvider = StreamProvider.autoDispose<List<Expense>>((ref) {
+  final familyId = ref.watch(familyIdProvider);
+  if (familyId == null) return Stream.value([]);
+  final vm = ref.read(expenseViewModelProvider.notifier);
+  return vm.getExpensesByFamily(familyId);
+});
+
 final familyMembersProvider = FutureProvider.autoDispose<Map<String, UserModel>>((ref) async {
   final familyId = ref.watch(familyIdProvider);
   if (familyId == null) return {};

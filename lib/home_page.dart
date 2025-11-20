@@ -14,15 +14,6 @@ import 'viewmodels/family_viewmodel.dart';
 import 'models/expense.dart';
 import 'providers/ui_state_providers.dart';
 
-// Providers
-final expenseListProvider = StreamProvider.autoDispose<List<Expense>>((ref) {
-  final familyId = ref.watch(familyIdProvider);
-  if (familyId == null) return Stream.value([]);
-  
-  final expenseViewModel = ref.read(expenseViewModelProvider.notifier);
-  return expenseViewModel.getExpensesByFamily(familyId);
-});
-
 class HomePage extends ConsumerStatefulWidget {
   @override ConsumerState<HomePage> createState()=>_HomePageState();
 }

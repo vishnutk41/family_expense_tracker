@@ -8,15 +8,6 @@ import '../models/expense.dart';
 import '../models/user_model.dart';
 import '../utils/constants.dart';
 
-// Import the provider from expense viewmodel
-final expenseListProvider = StreamProvider.autoDispose<List<Expense>>((ref) {
-  final familyId = ref.watch(familyIdProvider);
-  if (familyId == null) return Stream.value([]);
-  
-  final expenseViewModel = ref.read(expenseViewModelProvider.notifier);
-  return expenseViewModel.getExpensesByFamily(familyId);
-});
-
 class MembersExpensesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
