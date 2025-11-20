@@ -58,6 +58,10 @@ class _HomePageState extends ConsumerState<HomePage> {
           appBar: AppBar(
             title: Text(AppConstants.homeTitle),
             actions: [
+              IconButton(
+                icon: Icon(Icons.notifications_none),
+                onPressed: () => Navigator.of(context).pushNamed('/notifications'),
+              ),
               StreamBuilder(
                 stream: authViewModel.getUserDataStream(user.uid),
                 builder: (context, snapshot) {
