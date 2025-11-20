@@ -5,6 +5,8 @@ import '../viewmodels/profile_viewmodel.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import '../utils/constants.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:flutter/services.dart';
+import '../providers/firebase_providers.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   @override
@@ -13,6 +15,7 @@ class ProfilePage extends ConsumerStatefulWidget {
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   final TextEditingController _nameController = TextEditingController();
+  String? _fcmToken;
 
   @override
   void initState() {
@@ -22,6 +25,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       if (user != null) {
         ref.read(profileViewModelProvider.notifier).loadUserProfile(user.uid);
       }
+      ref.read(firebaseMessagingProvider).getToken().then((t) {
+        if (mounted) setState(() => _fcmToken = t);
+      });
     });
   }
 
@@ -303,6 +309,27 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 ),
                                 SizedBox(height: 16),
 
+                                ListTile(
+                                  leading: Icon(Icons.notifications, color: Colors.teal),
+                                  title: Text('FCM Token'),
+                                  subtitle: Text(
+                                    _fcmToken ?? 'Fetching...',
+                                    style: TextStyle(fontWeight: FontWeight.w500),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.copy, color: Colors.teal),
+                                    onPressed: _fcmToken == null
+                                        ? null
+                                        : () async {
+                                            await Clipboard.setData(ClipboardData(text: _fcmToken!));
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('Copied to clipboard')),
+                                            );
+                                          },
+                                  ),
+                                ),
+                                SizedBox(height: 16),
+
                                 // Created Date Field
                                 if (profileState.user!.createdAt != null)
                                   ListTile(
@@ -323,4 +350,4 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 ),
     );
   }
-} 
+}
