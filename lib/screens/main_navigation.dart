@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../home_page.dart';
 import 'members_expenses_screen.dart';
 import 'profile_page.dart';
 import '../providers/ui_state_providers.dart';
 
+@RoutePage(name: 'MainNavigationRoute')
 class MainNavigation extends ConsumerStatefulWidget {
   @override
   ConsumerState<MainNavigation> createState() => _MainNavigationState();

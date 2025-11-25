@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../viewmodels/profile_viewmodel.dart';
@@ -8,6 +9,7 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/services.dart';
 import '../providers/firebase_providers.dart';
 
+@RoutePage()
 class ProfilePage extends ConsumerStatefulWidget {
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();

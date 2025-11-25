@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'viewmodels/auth_viewmodel.dart';
 import 'providers/ui_state_providers.dart';
 
+@RoutePage()
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
@@ -24,7 +26,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         // Using the email as both email and display name for now
         await ref.read(authViewModelProvider.notifier).signUp(email, password, email);
         if (!mounted) return;
-        Navigator.pop(context); // Return to root; AppConfig will route to MainNavigation
+        context.router.pop();
       } catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -125,7 +127,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     SizedBox(height: 16),
                     OutlinedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.router.pop();
                       },
                       style: OutlinedButton.styleFrom(
                         minimumSize: Size(double.infinity, 50),

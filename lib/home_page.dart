@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +15,7 @@ import 'viewmodels/family_viewmodel.dart';
 import 'models/expense.dart';
 import 'providers/ui_state_providers.dart';
 
+@RoutePage()
 class HomePage extends ConsumerStatefulWidget {
   @override ConsumerState<HomePage> createState()=>_HomePageState();
 }
@@ -60,7 +62,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             actions: [
               IconButton(
                 icon: Icon(Icons.notifications_none),
-                onPressed: () => Navigator.of(context).pushNamed('/notifications'),
+                onPressed: () => context.router.pushNamed('/notifications'),
               ),
               StreamBuilder(
                 stream: authViewModel.getUserDataStream(user.uid),

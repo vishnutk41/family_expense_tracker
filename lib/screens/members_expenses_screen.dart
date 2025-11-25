@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../viewmodels/expense_viewmodel.dart';
@@ -8,6 +9,7 @@ import '../models/expense.dart';
 import '../models/user_model.dart';
 import '../utils/constants.dart';
 
+@RoutePage()
 class MembersExpensesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {

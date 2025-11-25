@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import '../providers/ui_state_providers.dart';
 
+@RoutePage()
 class LoginScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -114,7 +116,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     SizedBox(height: 16),
                     OutlinedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/signup');
+                        context.router.pushNamed('/signup');
                       },
                       style: OutlinedButton.styleFrom(
                         minimumSize: Size(double.infinity, 50),

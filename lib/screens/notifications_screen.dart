@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/notifications_provider.dart';
 
+@RoutePage()
 class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +25,7 @@ class NotificationsScreen extends ConsumerWidget {
                     ref.read(notificationsControllerProvider.notifier).markRead(index);
                     final route = n.data['route'] ?? n.data['screen'];
                     if (route is String && route.isNotEmpty) {
-                      Navigator.of(context).pushNamed('/' + route);
+                      context.router.pushPath('/$route');
                     }
                   },
                   child: Row(
